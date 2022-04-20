@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import static org.firstinspires.ftc.TeamCode.Constants.BasicBot.*;
+import static org.firstinspires.ftc.TeamCode.Constants.BasicBot;
 
 /**
  * This file is an iterative (Non-Linear) "OpMode" for TeleOp driving.
