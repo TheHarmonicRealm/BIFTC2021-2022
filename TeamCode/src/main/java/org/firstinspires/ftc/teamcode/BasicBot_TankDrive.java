@@ -1,6 +1,6 @@
 // base: /FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\BasicOpMode_Iterative.java
 
-package org.firstinspires.ftc.TeamCode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import static org.firstinspires.ftc.TeamCode.Constants.BasicBot;
+import org.firstinspires.ftc.teamcode.Constants.BasicBot;
 
 /**
  * This file is an iterative (Non-Linear) "OpMode" for TeleOp driving.
@@ -27,7 +27,13 @@ import static org.firstinspires.ftc.TeamCode.Constants.BasicBot;
 public class BasicBot_TankDrive extends OpMode
 {
     // Declare OpMode members.
-    private BasicBot_Hardware robot = new BasicBot_Hardware();
+    public DcMotor  leftFrontDrive;
+    public DcMotor  leftBackDrive;
+    public DcMotor  rightFrontDrive;
+    public DcMotor  rightBackDrive;
+
+    public static final double kLeftDeadZoneY = .1;
+    public static final double kRightDeadZoneY = .1;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -37,7 +43,33 @@ public class BasicBot_TankDrive extends OpMode
     @Override
     public void init() {
         //BasicBot_Hardware.java includes all the hardware inits. This runs them.
-        robot.init(hardwareMap);
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front");
+        /*leftBackDrive  = hwMap.get(DcMotor.class, "left_back");
+        rightFrontDrive = hwMap.get(DcMotor.class, "right_front");
+        rightBackDrive = hwMap.get(DcMotor.class, "right_back");*/
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        /*leftBackDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);*/ // Set to FORWARD if using AndyMark motors
+
+        // Set all motors to zero power
+        leftFrontDrive.setPower(0);
+        /*leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);*/
+
+        // Set all motors to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        /*leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
     }
 
     /*
@@ -81,10 +113,10 @@ public class BasicBot_TankDrive extends OpMode
         }
 
         //Send the values to the motors
-        leftFrontMotor.setPower(leftPower);
-        leftBackMotor.setPower(leftPower);
-        RightFrontMotor.setPower(rightPower);
-        RightBackMotor.setPower(rightPower);
+        leftFrontDrive.setPower(leftPower);
+        /*leftBackDrive.setPower(leftPower);
+        RightFrontDrive.setPower(rightPower);
+        RightBackDrive.setPower(rightPower);*/
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -96,10 +128,10 @@ public class BasicBot_TankDrive extends OpMode
      */
     @Override
     public void stop() {
-        leftFrontMotor.setPower(0);
-        leftBackMotor.setPower(0);
-        RightFrontMotor.setPower(0);
-        RightBackMotor.setPower(0);
+        leftFrontDrive.setPower(0);
+        /*leftBackDrive.setPower(0);
+        RightFrontDrive.setPower(0);
+        RightBackDrive.setPower(0);*/
     }
 
 }
