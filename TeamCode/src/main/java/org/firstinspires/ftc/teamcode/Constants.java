@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.TeamCode;
+package org.firstinspires.ftc.teamcode;
 /**
  * Lists values like motor speeds and positions.
  * It is best practice to use a constant stored here whenever reasonable in place of a bare number.

@@ -1,5 +1,5 @@
 // base: FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\HardwarePushbot.java
-package org.firstinspires.ftc.TeamCode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,10 +25,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BasicBot_Hardware
 {
     /* Public OpMode members. */
-    public DcMotor  leftFrontMotor;
-    public DcMotor  leftBackMotor;
-    public DcMotor  rightFrontMotor;
-    public DcMotor  rightBackMotor;
+    public DcMotor leftFrontDrive;
+    /*public DcMotor  leftBackDrive;
+    public DcMotor  rightFrontDrive;
+    public DcMotor  rightBackDrive;*/
 
     /* local OpMode members. */
     HardwareMap hwMap;
@@ -48,35 +48,35 @@ public class BasicBot_Hardware
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         leftFrontDrive  = hwMap.get(DcMotor.class, "left_front");
-        leftBackDrive  = hwMap.get(DcMotor.class, "left_back");
+        /*leftBackDrive  = hwMap.get(DcMotor.class, "left_back");
         rightFrontDrive = hwMap.get(DcMotor.class, "right_front");
-        rightBackDrive = hwMap.get(DcMotor.class, "right_back");
+        rightBackDrive = hwMap.get(DcMotor.class, "right_back");*/
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        /*leftBackDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);*/ // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
+        /*leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        rightBackDrive.setPower(0);*/
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        /*leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
 
         // Define and initialize ALL installed servos.
         //fakeServo  = hwMap.get(Servo.class, "fake_servo");
 
         // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
+        //telemetry.addData("Status", "Initialized");
     }
  }
 
