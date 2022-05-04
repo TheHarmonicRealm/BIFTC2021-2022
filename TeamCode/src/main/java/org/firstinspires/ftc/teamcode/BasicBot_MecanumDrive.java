@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-///import org.firstinspires.ftc.teamcode.Constants.BasicBot;
+//import org.firstinspires.ftc.teamcode.Constants.BasicBot;
 
 /**
  * This file is an iterative (Non-Linear) "OpMode" for TeleOp driving.
@@ -23,8 +23,8 @@ import com.qualcomm.robotcore.util.Range;
  *
  */
 
-@TeleOp(name="BasicBot: Tank Drive", group="Tank Drive")
-public class BasicBot_TankDrive extends OpMode
+@TeleOp(name="BasicBot: Mecanum Drive", group="Mecanum Drive")
+public class BasicBot_MecanumDrive extends OpMode
 {
     // Declare OpMode members.
     public DcMotor  leftFrontDrive;
@@ -36,6 +36,20 @@ public class BasicBot_TankDrive extends OpMode
     public static final double kRightDeadZoneY = .1;
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    public class MotorSpeeds{
+        double leftFront;
+        double rightFront;
+        double leftBack;
+        double rightBack;
+
+        public MotorSpeeds(double lF, double rF, double lB, double rB) {
+            leftFront = lF;
+            rightFront = rF;
+            leftBack = lB;
+            rightBack = rB;
+        }
+    }
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -98,28 +112,56 @@ public class BasicBot_TankDrive extends OpMode
 
         //Get the values of the joysticks in this loop. A very very large number of loops happen every second
         double leftY = gamepad1.left_stick_y;
-        double rightY = gamepad1.right_stick_y;
+        double rightY  =  gamepad1.right_stick_y;
+        double leftX = gamepad1.left_stick_x;
+
+        MotorSpeeds forwardSpeeds = new MotorSpeeds(leftY, leftY, leftY, leftY);
+
+        MotorSpeeds sidewaysSpeeds = new MotorSpeeds(leftX, -leftX, leftX, -leftX);
+
+        MotorSpeeds rotatingSpeeds = new MotorSpeeds(rightY, -rightY, rightY, -rightY);
+
+        double leftFrontCombined = forwardSpeeds.leftFront*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +sidewaysSpeeds.leftFront*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +rotatingSpeeds.leftFront*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+
+            double rightBackCombined = forwardSpeeds.rightBack*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +sidewaysSpeeds.rightBack*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +rotatingSpeeds.rightBack*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+
+            double leftBackCombined = forwardSpeeds.leftBack*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +sidewaysSpeeds.leftBack*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +rotatingSpeeds.leftBack*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+
+            double rightFrontCombined = forwardSpeeds.rightFront*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +sidewaysSpeeds.rightFront*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
+            +rotatingSpeeds.rightFront*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+
+
+        MotorSpeeds combinedSpeeds = new MotorSpeeds(leftFrontCombined, rightFrontCombined, leftBackCombined, rightBackCombined);
 
         //If sticks somehow are over 1/under -1 clip to those (max motor levels)
-        leftPower = Range.clip(leftY, -1.0, 1.0);
-        rightPower = Range.clip(rightY, -1.0, 1.0);
+        leftY = Range.clip(leftY, -1.0, 1.0);
+        leftX = Range.clip(leftX, -1.0, 1.0);
+        rightY = Range.clip(rightY, -1.0, 1.0);
 
         //If the sticks are within a "deadzone" defined in Constants.java (.1 range initially) set them to 0
-        if(Math.abs(leftPower) <= kLeftDeadZoneY){
-            leftPower = 0;
+        if(Math.abs(leftY) <= kLeftDeadZoneY){
+            leftY = 0;
         }
-        if(Math.abs(rightPower) <= kRightDeadZoneY){
-            rightPower = 0;
+        if(Math.abs(rightY) <= kRightDeadZoneY){
+            rightY = 0;
         }
 
         //Send the values to the motors
-        leftFrontDrive.setPower(leftPower);
-        leftBackDrive.setPower(leftPower);
-        RightFrontDrive.setPower(rightPower);
-        RightBackDrive.setPower(rightPower);
+        leftFrontDrive.setPower(combinedSpeeds.leftFront);
+        leftBackDrive.setPower(combinedSpeeds.leftBack);
+        rightFrontDrive.setPower(combinedSpeeds.rightFront);
+        rightBackDrive.setPower(combinedSpeeds.rightBack);
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftY, rightY);
     }
 
     /*
@@ -129,8 +171,8 @@ public class BasicBot_TankDrive extends OpMode
     public void stop() {
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
-        RightFrontDrive.setPower(0);
-        RightBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
 
 }
