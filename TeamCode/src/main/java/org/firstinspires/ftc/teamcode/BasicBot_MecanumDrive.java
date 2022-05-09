@@ -51,6 +51,14 @@ public class BasicBot_MecanumDrive extends OpMode
         }
     }
 
+    public double getInputWeight(double primary, double secondary, double tertiary) {
+
+        primary = Math.abs(primary);
+        secondary = Math.abs(secondary);
+        tertiary = Math.abs(tertiary);
+        return primary/(primary + secondary + tertiary);
+    }
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -121,22 +129,21 @@ public class BasicBot_MecanumDrive extends OpMode
 
         MotorSpeeds rotatingSpeeds = new MotorSpeeds(rightY, -rightY, rightY, -rightY);
 
-        double leftFrontCombined = forwardSpeeds.leftFront*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +sidewaysSpeeds.leftFront*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +rotatingSpeeds.leftFront*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+        double leftFrontCombined = forwardSpeeds.leftFront*getInputWeight(leftY, leftX, rightX)
+            +sidewaysSpeeds.leftFront*getInputWeight(leftX, leftY, rightX)
+            +rotatingSpeeds.leftFront*getInputWeight(rightX, leftY, leftX);
 
-            double rightBackCombined = forwardSpeeds.rightBack*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +sidewaysSpeeds.rightBack*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +rotatingSpeeds.rightBack*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+        double rightBackCombined = forwardSpeeds.rightBack*getInputWeight(leftY, leftX, rightX)
+            +sidewaysSpeeds.rightBack*getInputWeight(leftX, leftY, rightX)
+            +rotatingSpeeds.rightBack*getInputWeight(rightX, leftY, leftX);
 
-            double leftBackCombined = forwardSpeeds.leftBack*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +sidewaysSpeeds.leftBack*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +rotatingSpeeds.leftBack*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
+        double leftBackCombined = forwardSpeeds.leftBack*getInputWeight(leftY, leftX, rightX)
+            +sidewaysSpeeds.leftBack*getInputWeight(leftX, leftY, rightX)
+            +rotatingSpeeds.leftBack*getInputWeight(rightX, leftY, leftX);
 
-            double rightFrontCombined = forwardSpeeds.rightFront*Math.abs(leftY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +sidewaysSpeeds.rightFront*Math.abs(leftX)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY))
-            +rotatingSpeeds.rightFront*Math.abs(rightY)/(Math.abs(leftY)+Math.abs(leftX)+Math.abs(rightY));
-
+        double rightFrontCombined = forwardSpeeds.rightFront*getInputWeight(leftY, leftX, rightX)
+            +sidewaysSpeeds.rightFront*getInputWeight(leftX, leftY, rightX)
+            +rotatingSpeeds.rightFront*getInputWeight(rightX, leftY, leftX);
 
         MotorSpeeds combinedSpeeds = new MotorSpeeds(leftFrontCombined, rightFrontCombined, leftBackCombined, rightBackCombined);
 
