@@ -115,19 +115,34 @@ public class BasicBot_MecanumDrive extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
+        double leftFrontPower;
+        double rightFrontPower;
+        double leftBackPower;
+        double rightBackPower;
 
         //Get the values of the joysticks in this loop. A very very large number of loops happen every second
         double leftY = gamepad1.left_stick_y;
-        double rightY  =  gamepad1.right_stick_y;
+        double rightX  =  gamepad1.right_stick_X;
         double leftX = gamepad1.left_stick_x;
+
+        //If sticks somehow are over 1/under -1 clip to those (max motor levels)
+        leftY = Range.clip(leftY, -1.0, 1.0);
+        leftX = Range.clip(leftX, -1.0, 1.0);
+        rightX = Range.clip(rightX, -1.0, 1.0);
+
+        //If the sticks are within a "deadzone" defined in Constants.java (.1 range initially) set them to 0
+        if(Math.abs(leftY) <= kLeftDeadZoneY){
+            leftY = 0;
+        }
+        if(Math.abs(rightX) <= kRightDeadZoneY){
+            rightX = 0;
+        }
 
         MotorSpeeds forwardSpeeds = new MotorSpeeds(leftY, leftY, leftY, leftY);
 
-        MotorSpeeds sidewaysSpeeds = new MotorSpeeds(leftX, -leftX, leftX, -leftX);
+        MotorSpeeds sidewaysSpeeds = new MotorSpeeds(-leftX, leftX, leftX, -leftX);
 
-        MotorSpeeds rotatingSpeeds = new MotorSpeeds(rightY, -rightY, rightY, -rightY);
+        MotorSpeeds rotatingSpeeds = new MotorSpeeds(rightX, -rightX, rightX, -rightX);
 
         double leftFrontCombined = forwardSpeeds.leftFront*getInputWeight(leftY, leftX, rightX)
             +sidewaysSpeeds.leftFront*getInputWeight(leftX, leftY, rightX)
@@ -147,28 +162,20 @@ public class BasicBot_MecanumDrive extends OpMode
 
         MotorSpeeds combinedSpeeds = new MotorSpeeds(leftFrontCombined, rightFrontCombined, leftBackCombined, rightBackCombined);
 
-        //If sticks somehow are over 1/under -1 clip to those (max motor levels)
-        leftY = Range.clip(leftY, -1.0, 1.0);
-        leftX = Range.clip(leftX, -1.0, 1.0);
-        rightY = Range.clip(rightY, -1.0, 1.0);
-
-        //If the sticks are within a "deadzone" defined in Constants.java (.1 range initially) set them to 0
-        if(Math.abs(leftY) <= kLeftDeadZoneY){
-            leftY = 0;
-        }
-        if(Math.abs(rightY) <= kRightDeadZoneY){
-            rightY = 0;
-        }
-
         //Send the values to the motors
         leftFrontDrive.setPower(combinedSpeeds.leftFront);
         leftBackDrive.setPower(combinedSpeeds.leftBack);
         rightFrontDrive.setPower(combinedSpeeds.rightFront);
         rightBackDrive.setPower(combinedSpeeds.rightBack);
 
+        leftFrontPower = combinedSpeeds.leftFront;
+        rightFrontPower = combinedSpeeds.righttFront;
+        leftBackPower = combinedSpeeds.leftBack;
+        rightBackPower = combinedSpeeds.rightBack;
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftY, rightY);
+        telemetry.addData("Motors", "left front (%.2f), right front (%.2f), left back (%.2f), right back (%.2f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
     }
 
     /*
